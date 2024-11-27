@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>League of Ireland Viewer</title>
+</head>
+<body>
+    <button id="getTeams">Get Teams</button>
+    <div>
+        <img width="400px" id="showImage" src="">
+        <h1 id="showTitle"></h1>
+        <p id="showReleaseYear"></p>
+    </div>
+
+    <script>
+        document.getElementById('getTeams').addEventListener('click', async () => {
+            const allTeams = await fetchData(357, 2022);
+            console.log(allTeams);
+
+            allTeams.forEach(team => {
+                const teamCard = document.createElement('div');
+                teamCard.className = 'team-card';
+
+                const teamImage = document.createElement('img');
+                //teamImage.src = team.team.name;
+                console.log(team.team.name);
+            });
+
+            // document.getElementById("showTitle").innerHTML = result["results"].originalTitleText.text;
+            // document.getElementById("showImage").src = result["results"].primaryImage.url;
+            // document.getElementById("showReleaseYear").innerHTML = "Release Year: " + result["results"].releaseYear.year;
+        });
+
+        async function fetchData(leagueID, season) {
+            const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${season}`;
+            const options = {
+                method: 'GET',
+                headers: {
+                    'x-rapidapi-key': '12c3ec53b0msha444e311dcb662fp19498bjsn43c7861443f4',
+                    'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+                }
+            };
+
+            try {
+                const response = await fetch(url, options);
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
