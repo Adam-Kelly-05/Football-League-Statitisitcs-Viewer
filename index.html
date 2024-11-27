@@ -6,30 +6,49 @@
     <title>League of Ireland Viewer</title>
 </head>
 <body>
+    <h1>League of Ireland Statitisitcs Viewer</h1>
     <button id="getTeams">Get Teams</button>
-    <div>
-        <img width="400px" id="showImage" src="">
-        <h1 id="showTitle"></h1>
-        <p id="showReleaseYear"></p>
-    </div>
 
     <script>
         document.getElementById('getTeams').addEventListener('click', async () => {
             const allTeams = await fetchData(357, 2022);
             console.log(allTeams);
 
-            allTeams.forEach(team => {
+            allTeams.response.forEach(i => {
                 const teamCard = document.createElement('div');
                 teamCard.className = 'team-card';
 
                 const teamImage = document.createElement('img');
-                //teamImage.src = team.team.name;
-                console.log(team.team.name);
-            });
+                teamImage.src = i.team.logo;
+                teamImage.alt = i.team.name;
+                teamCard.appendChild(teamImage)
 
-            // document.getElementById("showTitle").innerHTML = result["results"].originalTitleText.text;
-            // document.getElementById("showImage").src = result["results"].primaryImage.url;
-            // document.getElementById("showReleaseYear").innerHTML = "Release Year: " + result["results"].releaseYear.year;
+                const teamDetails = document.createElement('div');
+                teamDetails.className = 'team-details'
+
+                const teamName = document.createElement('h1');
+                teamName.textContent = i.team.name;
+                teamDetails.appendChild(teamName);
+
+                const teamFounded = document.createElement('h3');
+                teamFounded.textContent = "Founded: " + i.team.founded;
+                teamDetails.appendChild(teamFounded);
+
+                const stadiumName = document.createElement('h3');
+                stadiumName.textContent = "Stadium Name: " + i.venue.name;
+                teamDetails.appendChild(stadiumName);
+
+                const stadiumCapacity = document.createElement('h3');
+                stadiumCapacity.textContent = "Stadium Capacity: " + i.venue.capacity;
+                teamDetails.appendChild(stadiumCapacity);
+
+                const stadiumAddress = document.createElement('h3');
+                stadiumAddress.textContent = "Stadium Address: " + i.venue.address + ", " + i.venue.city;
+                teamDetails.appendChild(stadiumAddress);
+
+                teamCard.appendChild(teamDetails);
+                document.body.appendChild(teamCard);
+            });
         });
 
         async function fetchData(leagueID, season) {
