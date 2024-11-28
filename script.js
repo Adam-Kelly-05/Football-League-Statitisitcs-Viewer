@@ -71,30 +71,42 @@ async function getInfoOfTeam(teamID) {
     const teamInfo = await fetchInfoOfTeam(teamID);
     console.log(teamInfo);
 
-    teamInfo.response.players.forEach(i => {
+    document.getElementById('playersContainer').innerHTML = '';
+    teamInfo.response.forEach(i => {
         const playerCard = document.createElement('div');
         playerCard.classList = 'player-card';
 
         const playerImage = document.createElement('img');
-        playerImage.src = i.photo;
-        playerImage.alt = i.name
+        playerImage.src = i.player.photo;
+        playerImage.alt = i.player.firstname;
         playerCard.appendChild(playerImage);
 
         const playerDetails = document.createElement('div');
         playerDetails.className = 'player-details';
 
         const playerName = document.createElement('h3');
-        playerName.textContent = i.name;
+        playerName.textContent = i.player.name;
         playerDetails.appendChild(playerName);
 
         const playerPosition = document.createElement('h3');
-        playerPosition.textContent = i.position;
+        playerPosition.textContent = "Position: " + i.statistics[0].games.position;
         playerDetails.appendChild(playerPosition);
+
+        const playerAge = document.createElement('h3');
+        playerAge.textContent = "Age: " + i.player.age;
+        playerDetails.appendChild(playerAge);
+
+        const playerNationality = document.createElement('h3');
+        playerNationality.textContent = "Nationality: " + i.player.nationality;
+        playerDetails.appendChild(playerNationality);
+
+        playerCard.appendChild(playerDetails);
+        document.body.appendChild(playerCard)
     });
 }
 
 async function fetchInfoOfTeam(teamID) {
-    const url = `https://v3.football.api-sports.io/players/squads?team=${teamID}`;
+    const url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${teamID}&season=${year}`;
     const options = {
         method: 'GET',
         headers: {
