@@ -1,7 +1,8 @@
-document.getElementById('getTeams').addEventListener('click', async () => {
-    const leagueID = 357;
-    const year = 2022;
-    const allTeams = await fetchData(leagueID, year);
+const leagueID = 357;
+const year = 2022;
+
+async function getTeamsInLeague() {
+    const allTeams = await fetchTeamsInLeague();
     console.log(allTeams);
 
     allTeams.response.forEach(i => {
@@ -38,16 +39,62 @@ document.getElementById('getTeams').addEventListener('click', async () => {
 
         const teamButton = document.createElement('button');
         teamButton.id = i.team.id;
-        teamButton.textContent = "Learn more"
+        teamButton.textContent = "Learn more";
+        teamButton.setAttribute('onclick', `getInfoOfTeam(${i.team.id})`);
         teamDetails.appendChild(teamButton);
 
         teamCard.appendChild(teamDetails);
         document.body.appendChild(teamCard);
     });
-});
+};
 
-async function fetchData(leagueID, season) {
-    const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${season}`;
+async function fetchTeamsInLeague() {
+    const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${year}`;
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': '12c3ec53b0msha444e311dcb662fp19498bjsn43c7861443f4',
+            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+async function getInfoOfTeam(teamID) {
+    const teamInfo = await fetchInfoOfTeam(teamID);
+    console.log(teamInfo);
+
+    teamInfo.response.players.forEach(i => {
+        const playerCard = document.createElement('div');
+        playerCard.classList = 'player-card';
+
+        const playerImage = document.createElement('img');
+        playerImage.src = i.photo;
+        playerImage.alt = i.name
+        playerCard.appendChild(playerImage);
+
+        const playerDetails = document.createElement('div');
+        playerDetails.className = 'player-details';
+
+        const playerName = document.createElement('h3');
+        playerName.textContent = i.name;
+        playerDetails.appendChild(playerName);
+
+        const playerPosition = document.createElement('h3');
+        playerPosition.textContent = i.position;
+        playerDetails.appendChild(playerPosition);
+    });
+}
+
+async function fetchInfoOfTeam(teamID) {
+    const url = `https://v3.football.api-sports.io/players/squads?team=${teamID}`;
     const options = {
         method: 'GET',
         headers: {
