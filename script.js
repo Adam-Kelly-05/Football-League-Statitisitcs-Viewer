@@ -5,6 +5,10 @@ async function getTeamsInLeague() {
     const allTeams = await fetchTeamsInLeague();
     console.log(allTeams);
 
+    const teamContainer = document.createElement('div');
+    teamContainer.className = 'team-container';
+    document.body.appendChild(teamContainer)
+
     allTeams.response.forEach(i => {
         const teamCard = document.createElement('div');
         teamCard.className = 'team-card';
@@ -12,10 +16,10 @@ async function getTeamsInLeague() {
         const teamImage = document.createElement('img');
         teamImage.src = i.team.logo;
         teamImage.alt = i.team.name;
-        teamCard.appendChild(teamImage)
+        teamCard.appendChild(teamImage);
 
         const teamDetails = document.createElement('div');
-        teamDetails.className = 'team-details'
+        teamDetails.className = 'team-details';
 
         const teamName = document.createElement('h1');
         teamName.textContent = i.team.name;
@@ -39,12 +43,12 @@ async function getTeamsInLeague() {
 
         const teamButton = document.createElement('button');
         teamButton.id = i.team.id;
-        teamButton.textContent = "Learn more";
-        teamButton.setAttribute('onclick', `getInfoOfTeam(${i.team.id})`);
+        teamButton.textContent = "See Players";
+        teamButton.setAttribute('onclick', `getPlayersFromTeam(${i.team.id})`);
         teamDetails.appendChild(teamButton);
 
         teamCard.appendChild(teamDetails);
-        document.body.appendChild(teamCard);
+        teamContainer.appendChild(teamCard);
     });
 };
 
@@ -67,25 +71,40 @@ async function fetchTeamsInLeague() {
     }
 }
 
-async function getInfoOfTeam(teamID) {
-    const teamInfo = await fetchInfoOfTeam(teamID);
+async function getPlayersFromTeam(teamID) {
+    if (!!document.getElementById('player-container-title')) {
+        document.getElementById('player-container-title').remove();
+    }
+    const playerContainerTitle = document.createElement('h1');
+    playerContainerTitle.innerHTML = 'All Players';
+    playerContainerTitle.id = 'player-container-title';
+    document.body.appendChild(playerContainerTitle);
+    
+    if (!!document.getElementById('player-container')) {
+        document.getElementById('player-container').remove()
+    }
+    const playerContainer = document.createElement('div');
+    playerContainer.id = 'player-container';
+    playerContainer.className = 'player-container';
+    document.body.appendChild(playerContainer);
+
+    const teamInfo = await fetchPlayersFromTeam(teamID);
     console.log(teamInfo);
 
-    document.getElementById('playersContainer').innerHTML = '';
     teamInfo.response.forEach(i => {
         const playerCard = document.createElement('div');
         playerCard.classList = 'player-card';
 
         const playerImage = document.createElement('img');
         playerImage.src = i.player.photo;
-        playerImage.alt = i.player.firstname;
+        playerImage.alt = i.player.firstname + " " + i.player.lastname;
         playerCard.appendChild(playerImage);
 
         const playerDetails = document.createElement('div');
         playerDetails.className = 'player-details';
 
         const playerName = document.createElement('h3');
-        playerName.textContent = i.player.name;
+        playerName.textContent = i.player.firstname + " " + i.player.lastname;
         playerDetails.appendChild(playerName);
 
         const playerPosition = document.createElement('h3');
@@ -100,12 +119,16 @@ async function getInfoOfTeam(teamID) {
         playerNationality.textContent = "Nationality: " + i.player.nationality;
         playerDetails.appendChild(playerNationality);
 
+        const playerAppearences = document.createElement('h3');
+        playerAppearences.textContent = `Appearances in the ${year} premier division: ${i.statistics[0].games.appearences}`;
+        playerDetails.appendChild(playerAppearences);
+
         playerCard.appendChild(playerDetails);
-        document.body.appendChild(playerCard)
+        playerContainer.appendChild(playerCard);
     });
 }
 
-async function fetchInfoOfTeam(teamID) {
+async function fetchPlayersFromTeam(teamID) {
     const url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${teamID}&season=${year}`;
     const options = {
         method: 'GET',

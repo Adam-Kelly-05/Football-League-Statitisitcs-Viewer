@@ -12,8 +12,18 @@
 <body>
     <h1>League of Ireland Statitisitcs Viewer</h1>
     <button onclick="getTeamsInLeague()">Get Teams</button>
-    <div id="teamsContainer"></div>
-    <div id="playersContainer"></div>
+    <div>
+        <h3>Which Position(s) would you like to see</h3>
+        <input type="checkbox" id="GoalKeeper" name="GoalKeeper" value="GoalKeeper">
+        <label for="GoalKeeper">GoalKeeper</label><br>
+        <input type="checkbox" id="Defender" name="Defender" value="Defender">
+        <label for="Defender">Defender</label><br>
+        <input type="checkbox" id="Midfielder" name="Midfielder" value="Midfielder">
+        <label for="Midfielder">Midfielder</label><br> 
+        <input type="checkbox" id="Attacker" name="Attacker" value="Attacker">
+        <label for="Attacker">Attacker</label><br> 
+    </div>
+    <br>
     <script src="script.js"></script>
 </body>
 </html>

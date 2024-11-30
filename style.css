@@ -3,10 +3,7 @@ body {
     background-color: rgb(0, 35, 0);
     color: white;
     margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    padding: 20px; /* i moved the display flex and flex-wrap into the card containers */
 }
 
 .team-card {
@@ -38,6 +35,12 @@ body {
 }
 
 img {
-    border: 3px solid black;
+    border: 5px solid black;
     border-radius: 5px;
+}
+
+.team-container, .player-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
