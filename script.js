@@ -1,14 +1,18 @@
-const leagueID = 357; // The year and league id doesn't change, so they are constants
 const year = 2022;
 
 async function getTeamsInLeague() {
-    if (!document.getElementById('team-container')) { // this only runs if the teamsContainer hasn't been made yet
-    const allTeams = await fetchTeamsInLeague();
+    const chosenLeague = getChosenLeague();
+
+    if (!!document.getElementById('teamContainer')) { //  this only runs if the teamContainer has been made
+        document.getElementById('teamContainer').remove() // delete the teamContainer element
+    }
+
+    const allTeams = await fetchTeamsInLeague(chosenLeague);
     console.log(allTeams);
 
     const teamContainer = document.createElement('div')
     teamContainer.className = 'team-container';
-    teamContainer.id = 'team-container'
+    teamContainer.id = 'teamContainer'
     document.body.appendChild(teamContainer)
 
     allTeams.response.forEach(i => { // for every team in the response
@@ -53,10 +57,26 @@ async function getTeamsInLeague() {
         teamContainer.appendChild(teamCard);
     });
 }
-};
 
-async function fetchTeamsInLeague() {
-    const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${leagueID}&season=${year}`;
+function getChosenLeague() { // league id's never change, so their hard coded
+    if (document.getElementById("PremierLeague").checked) // if the radio button is clicked...
+        return 39; // return the league id
+    if (document.getElementById("LaLiga").checked)
+        return 140;
+    if (document.getElementById("Bundesliga").checked)
+        return 78;
+    if (document.getElementById("SerieA").checked)
+        return 135;
+    if (document.getElementById("Ligue1").checked)
+        return 61;
+    if (document.getElementById("Eredivisie").checked)
+        return 88;
+    if (document.getElementById("PremierDivision").checked)
+        return 357;
+}
+
+async function fetchTeamsInLeague(chosenLeague) {
+    const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${chosenLeague}&season=${year}`;
     const options = {
         method: 'GET',
         headers: {
@@ -124,10 +144,6 @@ async function getPlayersFromTeam(teamID) {
             const playerNationality = document.createElement('h3');
             playerNationality.textContent = "Nationality: " + i.player.nationality;
             playerDetails.appendChild(playerNationality);
-    
-            const playerAppearences = document.createElement('h3');
-            playerAppearences.textContent = `Appearances in the ${year} premier division: ${i.statistics[0].games.appearences}`;
-            playerDetails.appendChild(playerAppearences);
     
             playerCard.appendChild(playerDetails);
             playerContainer.appendChild(playerCard);
