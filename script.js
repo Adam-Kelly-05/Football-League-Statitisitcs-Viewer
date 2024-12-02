@@ -7,6 +7,8 @@ async function getTeamsInLeague() {
         document.getElementById('teamContainer').remove() // delete the teamContainer element
     }
 
+    resetPlayerContainer();
+
     const allTeams = await fetchTeamsInLeague(chosenLeague);
     console.log(allTeams);
 
@@ -58,6 +60,16 @@ async function getTeamsInLeague() {
     });
 }
 
+function resetPlayerContainer() {
+    if (!!document.getElementById('playerContainerTitle')) { //  this only runs if the playerContainerTitle has been made
+        document.getElementById('playerContainerTitle').remove(); // delete the playerContainerTitle element
+    }
+
+    if (!!document.getElementById('playerContainer')) { //  this only runs if the playerContainerTitle has been made
+        document.getElementById('playerContainer').remove();
+    }
+}
+
 function getChosenLeague() { // league id's never change, so their hard coded
     if (document.getElementById("PremierLeague").checked) // if the radio button is clicked...
         return 39; // return the league id
@@ -95,17 +107,13 @@ async function fetchTeamsInLeague(chosenLeague) {
 }
 
 async function getPlayersFromTeam(teamID) {
-    if (!!document.getElementById('playerContainerTitle')) { //  this only runs if the playerContainerTitle has been made
-        document.getElementById('playerContainerTitle').remove(); // delete the playerContainerTitle element
-    }
+    resetPlayerContainer();
+
     const playerContainerTitle = document.createElement('h1');
     playerContainerTitle.innerHTML = 'All Players';
     playerContainerTitle.id = 'playerContainerTitle';
     document.body.appendChild(playerContainerTitle);
     
-    if (!!document.getElementById('playerContainer')) { //  this only runs if the playerContainerTitle has been made
-        document.getElementById('playerContainer').remove() // delete the playerContainerTitle element
-    }
     const playerContainer = document.createElement('div');
     playerContainer.id = 'playerContainer';
     playerContainer.className = 'player-container';
