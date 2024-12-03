@@ -1,35 +1,35 @@
 const year = 2022;
 
-function getChosenLeague() { // league id's never change, so their hard coded
+function getChosenLeagueID() { // league id's never change, so their hard coded
     if (document.getElementById("PremierLeague").checked) // if the radio button is clicked...
         return 39; // return the league id
-    if (document.getElementById("LaLiga").checked)
+    else if (document.getElementById("LaLiga").checked)
         return 140;
-    if (document.getElementById("Bundesliga").checked)
+    else if (document.getElementById("Bundesliga").checked)
         return 78;
-    if (document.getElementById("SerieA").checked)
+    else if (document.getElementById("SerieA").checked)
         return 135;
-    if (document.getElementById("Ligue1").checked)
+    else if (document.getElementById("Ligue1").checked)
         return 61;
-    if (document.getElementById("Eredivisie").checked)
+    else if (document.getElementById("Eredivisie").checked)
         return 88;
-    if (document.getElementById("PremierDivision").checked)
+    else if (document.getElementById("PremierDivision").checked)
         return 357;
 }
 
-function resetPlayerContainer() {
-    if (!!document.getElementById('playerContainerTitle')) { //  this only runs if the playerContainerTitle has been made
+function resetPlayerContainer() { // This deletes the title and container (all player data)
+    if (!!document.getElementById('playerContainerTitle')) { // this only runs if the playerContainerTitle has been made
         document.getElementById('playerContainerTitle').remove(); // delete the playerContainerTitle element
     }
 
-    if (!!document.getElementById('playerContainer')) { //  this only runs if the playerContainerTitle has been made
+    if (!!document.getElementById('playerContainer')) {
         document.getElementById('playerContainer').remove();
     }
 }
 
 async function fetchData(object, ID) {
     url = "";
-    if (object == "Teams") // I use the same fetch function twice, by haveing both links in the one function
+    if (object == "Teams") // I use the same fetch function twice, by having both links in the one function
         url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${ID}&season=${year}`;
     else if (object == "Players")
         url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${ID}&season=${year}`;
@@ -52,7 +52,7 @@ async function fetchData(object, ID) {
 }
 
 async function getTeamsInLeague() {
-    const chosenLeague = getChosenLeague();
+    const chosenLeague = getChosenLeagueID();
 
     if (!!document.getElementById('teamContainer')) { //  this only runs if the teamContainer has been made
         document.getElementById('teamContainer').remove() // delete the teamContainer element
@@ -117,7 +117,7 @@ async function getPlayersFromTeam(teamID) {
     const playerContainerTitle = document.createElement('h1');
     playerContainerTitle.innerHTML = 'All Players';
     playerContainerTitle.id = 'playerContainerTitle';
-    document.body.appendChild(playerContainerTitle);
+    document.body.appendChild(playerContainerTitle); // The Title and container are seporate, so the progeam doesn't style the title as a card
     
     const playerContainer = document.createElement('div');
     playerContainer.id = 'playerContainer';
@@ -127,8 +127,8 @@ async function getPlayersFromTeam(teamID) {
     const teamInfo = await fetchData("Players", teamID);
     console.log(teamInfo);
 
-    teamInfo.response.forEach(i => {  // for every team in the response
-        if (document.getElementById(i.statistics[0].games.position + "Checkbox").checked) {
+    teamInfo.response.forEach(i => { // for every player in the response
+        if (document.getElementById(i.statistics[0].games.position + "Checkbox").checked) { // If the goalkeeper box is ticked, show goalkeepers etc.
             const playerCard = document.createElement('div');
             playerCard.classList = 'player-card';
     
@@ -145,7 +145,7 @@ async function getPlayersFromTeam(teamID) {
             playerDetails.appendChild(playerName);
     
             const playerPosition = document.createElement('h3');
-            playerPosition.textContent = "Position: " + i.statistics[0].games.position; // statistics is divivied by leagues, but premier division is alwats first, so it's set to check [0]
+            playerPosition.textContent = "Position: " + i.statistics[0].games.position; // statistics often has more then one entry, but their position always stays the same so using the first one is safe
             playerDetails.appendChild(playerPosition);
     
             const playerAge = document.createElement('h3');

@@ -37,6 +37,7 @@ body {
 img {
     border: 5px solid black;
     border-radius: 5px;
+    padding: 3px;
 }
 
 .team-container, .player-container {
