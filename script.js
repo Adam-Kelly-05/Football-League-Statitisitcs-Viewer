@@ -29,7 +29,7 @@ function resetPlayerContainer() {
 
 async function fetchData(object, ID) {
     url = "";
-    if (object == "Teams")
+    if (object == "Teams") // I use the same fetch function twice, by haveing both links in the one function
         url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${ID}&season=${year}`;
     else if (object == "Players")
         url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${ID}&season=${year}`;
