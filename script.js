@@ -1,5 +1,56 @@
 const year = 2022;
 
+function getChosenLeague() { // league id's never change, so their hard coded
+    if (document.getElementById("PremierLeague").checked) // if the radio button is clicked...
+        return 39; // return the league id
+    if (document.getElementById("LaLiga").checked)
+        return 140;
+    if (document.getElementById("Bundesliga").checked)
+        return 78;
+    if (document.getElementById("SerieA").checked)
+        return 135;
+    if (document.getElementById("Ligue1").checked)
+        return 61;
+    if (document.getElementById("Eredivisie").checked)
+        return 88;
+    if (document.getElementById("PremierDivision").checked)
+        return 357;
+}
+
+function resetPlayerContainer() {
+    if (!!document.getElementById('playerContainerTitle')) { //  this only runs if the playerContainerTitle has been made
+        document.getElementById('playerContainerTitle').remove(); // delete the playerContainerTitle element
+    }
+
+    if (!!document.getElementById('playerContainer')) { //  this only runs if the playerContainerTitle has been made
+        document.getElementById('playerContainer').remove();
+    }
+}
+
+async function fetchData(object, ID) {
+    url = "";
+    if (object == "Teams")
+        url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${ID}&season=${year}`;
+    else if (object == "Players")
+        url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${ID}&season=${year}`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': '12c3ec53b0msha444e311dcb662fp19498bjsn43c7861443f4',
+            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+        const result = await response.json();
+        return result;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 async function getTeamsInLeague() {
     const chosenLeague = getChosenLeague();
 
@@ -9,7 +60,7 @@ async function getTeamsInLeague() {
 
     resetPlayerContainer();
 
-    const allTeams = await fetchTeamsInLeague(chosenLeague);
+    const allTeams = await fetchData("Teams", chosenLeague);
     console.log(allTeams);
 
     const teamContainer = document.createElement('div')
@@ -60,52 +111,6 @@ async function getTeamsInLeague() {
     });
 }
 
-function resetPlayerContainer() {
-    if (!!document.getElementById('playerContainerTitle')) { //  this only runs if the playerContainerTitle has been made
-        document.getElementById('playerContainerTitle').remove(); // delete the playerContainerTitle element
-    }
-
-    if (!!document.getElementById('playerContainer')) { //  this only runs if the playerContainerTitle has been made
-        document.getElementById('playerContainer').remove();
-    }
-}
-
-function getChosenLeague() { // league id's never change, so their hard coded
-    if (document.getElementById("PremierLeague").checked) // if the radio button is clicked...
-        return 39; // return the league id
-    if (document.getElementById("LaLiga").checked)
-        return 140;
-    if (document.getElementById("Bundesliga").checked)
-        return 78;
-    if (document.getElementById("SerieA").checked)
-        return 135;
-    if (document.getElementById("Ligue1").checked)
-        return 61;
-    if (document.getElementById("Eredivisie").checked)
-        return 88;
-    if (document.getElementById("PremierDivision").checked)
-        return 357;
-}
-
-async function fetchTeamsInLeague(chosenLeague) {
-    const url = `https://api-football-v1.p.rapidapi.com/v3/teams?league=${chosenLeague}&season=${year}`;
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': '12c3ec53b0msha444e311dcb662fp19498bjsn43c7861443f4',
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
-        }
-    };
-
-    try {
-        const response = await fetch(url, options);
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 async function getPlayersFromTeam(teamID) {
     resetPlayerContainer();
 
@@ -119,13 +124,11 @@ async function getPlayersFromTeam(teamID) {
     playerContainer.className = 'player-container';
     document.body.appendChild(playerContainer);
 
-    const teamInfo = await fetchPlayersFromTeam(teamID);
+    const teamInfo = await fetchData("Players", teamID);
     console.log(teamInfo);
 
     teamInfo.response.forEach(i => {  // for every team in the response
-        const checkedPositions = choosePositions();
-
-        if (checkedPositions.includes(i.statistics[0].games.position)) {
+        if (document.getElementById(i.statistics[0].games.position + "Checkbox").checked) {
             const playerCard = document.createElement('div');
             playerCard.classList = 'player-card';
     
@@ -157,38 +160,4 @@ async function getPlayersFromTeam(teamID) {
             playerContainer.appendChild(playerCard);
         }
     });
-}
-
-async function fetchPlayersFromTeam(teamID) {
-    const url = `https://api-football-v1.p.rapidapi.com/v3/players?team=${teamID}&season=${year}`;
-    const options = {
-        method: 'GET',
-        headers: {
-            'x-rapidapi-key': '12c3ec53b0msha444e311dcb662fp19498bjsn43c7861443f4',
-            'x-rapidapi-host': 'api-football-v1.p.rapidapi.com'
-        }
-    };
-
-    try {
-        const response = await fetch(url, options);
-        const result = await response.json();
-        return result;
-    } catch (error) {
-        console.error(error);
-    }
-}
-
-function choosePositions() {
-    const checkedPositions = []; // list for checked boxes
-    
-    if (document.getElementById("GoalkeeperCheckbox").checked) // if this checkbox is checked...
-        checkedPositions.push("Goalkeeper"); // add the position to the list
-    if (document.getElementById("DefenderCheckbox").checked)
-        checkedPositions.push("Defender");
-    if (document.getElementById("MidfielderCheckbox").checked)
-        checkedPositions.push("Midfielder");
-    if (document.getElementById("AttackerCheckbox").checked)
-        checkedPositions.push("Attacker");
-
-    return checkedPositions; // return the list
 }
